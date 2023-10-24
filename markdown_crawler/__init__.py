@@ -39,6 +39,7 @@ DEFAULT_TARGET_LINKS = ['body']
 DEFAULT_DOMAIN_MATCH = True
 DEFAULT_BASE_PATH_MATCH = True
 
+
 # --------------
 # URL validation
 # --------------
@@ -90,7 +91,7 @@ def crawl(
     # Create BS4 instance for parsing
     # -------------------------------
     soup = BeautifulSoup(response.text, 'html.parser')
-    
+
     # --------------------------------------------
     # Write the markdown file if it does not exist
     # --------------------------------------------
@@ -105,27 +106,27 @@ def crawl(
         # Get target content
         # ------------------
         content = get_target_content(soup, target_content,)
-        
+
         # ---------------
         # Return if empty
         # --------------
         if not content:
             logger.error(f'❌ Empty content for {file_path}. Please check your targets, skipping. ')
             return []
-        
+
         # --------------
         # Parse markdown
         # --------------
         md = h.handle(content)
-        
+
         logger.info(f'Created 📝 {file_name}')
-       
+    
         # ------------------------------
         # Write markdown content to file
         # ------------------------------
         with open(file_path, 'w') as f:
             f.write(md)
-    
+
     child_urls = get_target_links(
         soup,
         base_url,
@@ -143,7 +144,7 @@ def get_target_content(
     soup: BeautifulSoup,
     target_content: Union[List[str], None] = None
 ) -> str:
-    
+
     content = ''
 
     # -------------------------------------
@@ -178,7 +179,7 @@ def get_target_links(
     valid_paths: Union[List[str], None] = None,
     is_domain_match: Optional[bool] = DEFAULT_DOMAIN_MATCH,
     is_base_path_match: Optional[bool] = DEFAULT_BASE_PATH_MATCH
-)-> List[str]:
+) -> List[str]:
 
     child_urls = []
 
@@ -188,10 +189,9 @@ def get_target_links(
         for link in target.find_all('a'):
             child_urls.append(urllib.parse.urljoin(base_url, link.get('href')))
 
-    
     result = []
     for u in child_urls:
-        
+
         child_url = urllib.parse.urlparse(u)
 
         # ---------------------------------
@@ -203,14 +203,14 @@ def get_target_links(
         if is_base_path_match and child_url.path.startswith(urllib.parse.urlparse(base_url).path):
             result.append(u)
             continue
-        
+
         if valid_paths:
             for valid_path in valid_paths:
                 if child_url.path.startswith(urllib.parse.urlparse(valid_path).path):
                     result.append(u)
                     break
-        
-    return result    
+
+    return result
 
 
 # ------------------
@@ -276,20 +276,20 @@ def md_crawl(
 
     if not base_url:
         raise ValueError('❌ Base URL is required')
-    
+
     if isinstance(target_links, str):
         target_links = target_links.split(',') if ',' in target_links else [target_links]
-    
+
     if isinstance(target_content, str):
         target_content = target_content.split(',') if ',' in target_content else [target_content]
 
     if isinstance(valid_paths, str):
         valid_paths = valid_paths.split(',') if ',' in valid_paths else [valid_paths]
-    
+
     if is_debug:
-        logging.basicConfig(level=logging.DEBUG)
+        logger.setLevel(level=logging.DEBUG)
         logger.debug('🐞 Debugging enabled')
-    
+
     logger.info(f'🕸️ Crawling {base_url} at ⏬ depth {max_depth} with 🧵 {num_threads} threads')
 
     # Validate the base URL
