@@ -30,7 +30,7 @@ def main():
         args.base_url,
         max_depth=args.max_depth,
         num_threads=args.num_threads,
-        base_dir=args.base_path,
+        base_dir=args.base_dir,
         target_content=args.target_content.split(',') if args.target_content and ',' in args.target_content else None,
         target_links=args.target_links.split(',') if args.target_links and ',' in args.target_links else [args.target_links],
         valid_paths=args.valid_paths.split(',') if args.valid_paths and ',' in args.valid_paths else None,
