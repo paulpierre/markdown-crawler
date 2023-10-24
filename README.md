@@ -36,15 +36,21 @@ Markdown by nature is human readable and maintains document structure while keep
 # 🚀 Get started
 
 If you wish to simply use it in the CLI, you can run the following command:
+
+Install the package
 ```
 pip install md_crawler
-md_crawler -n 5 -d 3 -b ./markdown https://platform.openai.com/docs/introduction
 ```
 
-From the github repo once you have it checked out:
+Execute the CLI
 ```
-pip3 install -r requirements.txt
-python3 md_crawler.py -n 5 -d 3 -b ./markdown https://en.wikipedia.org/wiki/Morty_Smith
+md_crawler -t 5 -d 3 -b ./markdown https://en.wikipedia.org/wiki/Morty_Smith
+```
+
+To run from the github repo, once you have it checked out:
+```
+pip install -r requirements.txt
+python3 md_crawler.py -t 5 -d 3 -b ./markdown https://en.wikipedia.org/wiki/Morty_Smith
 ```
 
 Or use the library in your own code:
