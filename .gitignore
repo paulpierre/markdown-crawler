@@ -4,4 +4,5 @@ env/
 venv/
 build/
 *.egg-info/
-__pycache__
+__pycache__/
+*.pyc

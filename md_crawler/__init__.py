@@ -32,7 +32,7 @@ creates a 🔽 markdown file for each page by https://github.com/paulpierre
 """
 
 logger = logging.getLogger(__name__)
-DEFAULT_BASE_PATH = 'markdown'
+DEFAULT_BASE_DIR = 'markdown'
 DEFAULT_MAX_DEPTH = 3
 DEFAULT_NUM_THREADS = 5
 DEFAULT_TARGET_CONTENT = ['article', 'div', 'main', 'p']
@@ -72,7 +72,7 @@ def crawl(
     target_content: Union[str, List[str]] = None,
     valid_paths: Union[str, List[str]] = None,
     is_domain_match: Optional[bool] = DEFAULT_DOMAIN_MATCH,
-    is_base_match: Optional[bool] = DEFAULT_BASE_PATH_MATCH
+    is_base_path_match: Optional[bool] = DEFAULT_BASE_PATH_MATCH
 ) -> List[str]:
     if url in already_crawled:
         return []
@@ -133,7 +133,7 @@ def crawl(
         target_links,
         valid_paths=valid_paths,
         is_domain_match=is_domain_match,
-        is_base_match=is_base_match    
+        is_base_path_match=is_base_path_match    
     )
 
     logger.debug(f'Found {len(child_urls) if child_urls else 0} child URLs')
@@ -178,7 +178,7 @@ def get_target_links(
     target_links: List[str] = DEFAULT_TARGET_LINKS,
     valid_paths: Union[List[str], None] = None,
     is_domain_match: Optional[bool] = DEFAULT_DOMAIN_MATCH,
-    is_base_match: Optional[bool] = DEFAULT_BASE_PATH_MATCH
+    is_base_path_match: Optional[bool] = DEFAULT_BASE_PATH_MATCH
 )-> List[str]:
 
     child_urls = []
@@ -201,7 +201,7 @@ def get_target_links(
         if is_domain_match and child_url.netloc != urllib.parse.urlparse(base_url).netloc:
             continue
 
-        if is_base_match and child_url.path.startswith(urllib.parse.urlparse(base_url).path):
+        if is_base_path_match and child_url.path.startswith(urllib.parse.urlparse(base_url).path):
             result.append(u)
             continue
         
@@ -222,12 +222,12 @@ def worker(
     base_url: str,
     max_depth: int,
     already_crawled: set,
-    base_path: str,
+    base_dir: str,
     target_links: Union[List[str], None] = DEFAULT_TARGET_LINKS,
     target_content: Union[List[str], None] = None,
     valid_paths: Union[List[str], None] = None,
     is_domain_match: bool = None,
-    is_base_match: bool = None
+    is_base_path_match: bool = None
 ) -> None:
     while not q.empty():
         depth, url = q.get()
@@ -235,7 +235,7 @@ def worker(
             continue
         file_name = '-'.join(re.findall(r'\w+', urllib.parse.urlparse(url).path))
         file_name = 'index' if not file_name else file_name
-        file_path = f'{base_path.rstrip("/") + "/"}{file_name}.md'
+        file_path = f'{base_dir.rstrip("/") + "/"}{file_name}.md'
 
         child_urls = crawl(
             url,
@@ -246,7 +246,7 @@ def worker(
             target_content,
             valid_paths,
             is_domain_match,
-            is_base_match
+            is_base_path_match
         )
         child_urls = [normalize_url(u) for u in child_urls]
         for child_url in child_urls:
@@ -261,19 +261,19 @@ def md_crawl(
         base_url: str,
         max_depth: Optional[int] = DEFAULT_MAX_DEPTH,
         num_threads: Optional[int] = DEFAULT_NUM_THREADS,
-        base_path: Optional[str] = DEFAULT_BASE_PATH,
+        base_dir: Optional[str] = DEFAULT_BASE_DIR,
         target_links: Union[str, List[str]] = DEFAULT_TARGET_LINKS,
         target_content: Union[str, List[str]] = None,
         valid_paths: Union[str, List[str]] = None,
         is_domain_match: Optional[bool] = None,
-        is_base_match: Optional[bool] = None,
+        is_base_path_match: Optional[bool] = None,
         is_debug: Optional[bool] = False
 ) -> None:
-    if is_domain_match is False and is_base_match is True:
+    if is_domain_match is False and is_base_path_match is True:
         raise ValueError('❌ Domain match must be True if base match is set to True')
 
     is_domain_match = DEFAULT_DOMAIN_MATCH if is_domain_match is None else is_domain_match
-    is_base_match = DEFAULT_BASE_PATH_MATCH if is_base_match is None else is_base_match
+    is_base_path_match = DEFAULT_BASE_PATH_MATCH if is_base_path_match is None else is_base_path_match
 
     if not base_url:
         raise ValueError('❌ Base URL is required')
@@ -297,9 +297,9 @@ def md_crawl(
     if not is_valid_url(base_url):
         raise ValueError('❌ Invalid base URL')
 
-    # Create base_path if it doesn't exist
-    if not os.path.exists(base_path):
-        os.makedirs(base_path)
+    # Create base_dir if it doesn't exist
+    if not os.path.exists(base_dir):
+        os.makedirs(base_dir)
 
     already_crawled = set()
 
@@ -320,12 +320,12 @@ def md_crawl(
                 base_url,
                 max_depth,
                 already_crawled,
-                base_path,
+                base_dir,
                 target_links,
                 target_content,
                 valid_paths,
                 is_domain_match,
-                is_base_match
+                is_base_path_match
             )
         )
         threads.append(t)
@@ -342,40 +342,33 @@ def md_crawl(
 def main():
     arg_parser = argparse.ArgumentParser()
     arg_parser.description = 'A multithreaded 🕸️ web crawler that recursively crawls a website and creates a 🔽 markdown file for each page'
-    arg_parser.add_argument('--max_depth', '-d', required=False, default=3, type=int)
-    arg_parser.add_argument('--num_threads', '-t', required=False, default=5, type=int)
-    arg_parser.add_argument('--base_path', '-b', required=False, default='markdown', type=str)
-    arg_parser.add_argument('--debug', '-v', required=False, type=bool, default=False)
+    arg_parser.add_argument('--max-depth', '-d', required=False, default=3, type=int)
+    arg_parser.add_argument('--num-threads', '-t', required=False, default=5, type=int)
+    arg_parser.add_argument('--base-dir', '-b', required=False, default='markdown', type=str)
+    arg_parser.add_argument('--debug', '-e', required=False, type=bool, default=False)
     arg_parser.add_argument('--target-content', '-c', required=False, type=str, default=None)
     arg_parser.add_argument('--target-links', '-l', required=False, type=str, default=DEFAULT_TARGET_LINKS)
-    arg_parser.add_argument('--valid-paths', '-p', required=False, type=str, default=None)
-    arg_parser.add_argument('--domain_match', '-d', required=False, type=bool, default=True)
-    arg_parser.add_argument('--base-match', '-m', required=False, type=bool, default=True)
+    arg_parser.add_argument('--valid-paths', '-v', required=False, type=str, default=None)
+    arg_parser.add_argument('--domain-match', '-m', required=False, type=bool, default=True)
+    arg_parser.add_argument('--base-path-match', '-p', required=False, type=bool, default=True)
     arg_parser.add_argument('base_url', type=str)
 
     # ----------------
     # Parse target arg
     # ----------------
-    target_content = args.target_content.split(',') if args.target_content and ',' in args.target_content else None
-    target_links = args.target_links.split(',') if args.target_links and ',' in args.target_links else [args.target_links]
-    valid_paths = args.valid_paths.split(',') if args.valid_paths and ',' in args.valid_paths else None
-    domain_match = args.domain_match
-    base_match = args.base_match
     args = arg_parser.parse_args()
-    base_url = args.base_url
-    debug = args.debug
 
     md_crawl(
-        base_url,
+        args.base_url,
         max_depth=args.max_depth,
         num_threads=args.num_threads,
-        base_path=args.base_path,
-        target_content=target_content,
-        target_links=target_links,
-        valid_paths=valid_paths,
-        is_domain_match=domain_match,
-        is_base_match=base_match,
-        is_debug=debug
+        base_dir=args.base_path,
+        target_content=args.target_content.split(',') if args.target_content and ',' in args.target_content else None,
+        target_links=args.target_links.split(',') if args.target_links and ',' in args.target_links else [args.target_links],
+        valid_paths=args.valid_paths.split(',') if args.valid_paths and ',' in args.valid_paths else None,
+        is_domain_match=args.domain_match,
+        is_base_path_match=args.base_match,
+        is_debug=args.debug
     )
 
 
