@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "markdown-crawler"
+version = "0.0.4"
+authors = [
+  { name="Paul Pierre", email="hi@paulpierre.com" },
+]
+description = "A multithreaded 🕸️ web crawler that recursively crawls a website and creates a 🔽 markdown file for each page"
+readme = "README.md"
+requires-python = ">=3.4"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/paulpierre/markdown-crawler"
+"Bug Tracker" = "https://github.com/paulpierre/markdown-crawler/issues"
+"Twitter" = "https://twitter.com/paulpierre"
+
+[project.scripts]
+markdown-crawler = "markdown_crawler.cli:main"

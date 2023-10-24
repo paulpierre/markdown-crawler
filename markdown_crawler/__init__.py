@@ -1,9 +1,8 @@
 from bs4 import BeautifulSoup
 import urllib.parse
 import threading
-from md_crawler import html2text
+from markdown_crawler import html2text
 import requests
-import argparse
 import logging
 import queue
 import time
@@ -291,7 +290,7 @@ def md_crawl(
         logging.basicConfig(level=logging.DEBUG)
         logger.debug('🐞 Debugging enabled')
     
-    logger.info(f'{BANNER}\n\n🕸️ Crawling {base_url} at ⏬ depth {max_depth} with 🧵 {num_threads} threads')
+    logger.info(f'🕸️ Crawling {base_url} at ⏬ depth {max_depth} with 🧵 {num_threads} threads')
 
     # Validate the base URL
     if not is_valid_url(base_url):
@@ -337,43 +336,3 @@ def md_crawl(
         t.join()
 
     logger.info('🏁 All threads have finished')
-
-
-def main():
-    arg_parser = argparse.ArgumentParser()
-    arg_parser.description = 'A multithreaded 🕸️ web crawler that recursively crawls a website and creates a 🔽 markdown file for each page'
-    arg_parser.add_argument('--max-depth', '-d', required=False, default=3, type=int)
-    arg_parser.add_argument('--num-threads', '-t', required=False, default=5, type=int)
-    arg_parser.add_argument('--base-dir', '-b', required=False, default='markdown', type=str)
-    arg_parser.add_argument('--debug', '-e', required=False, type=bool, default=False)
-    arg_parser.add_argument('--target-content', '-c', required=False, type=str, default=None)
-    arg_parser.add_argument('--target-links', '-l', required=False, type=str, default=DEFAULT_TARGET_LINKS)
-    arg_parser.add_argument('--valid-paths', '-v', required=False, type=str, default=None)
-    arg_parser.add_argument('--domain-match', '-m', required=False, type=bool, default=True)
-    arg_parser.add_argument('--base-path-match', '-p', required=False, type=bool, default=True)
-    arg_parser.add_argument('base_url', type=str)
-
-    # ----------------
-    # Parse target arg
-    # ----------------
-    args = arg_parser.parse_args()
-
-    md_crawl(
-        args.base_url,
-        max_depth=args.max_depth,
-        num_threads=args.num_threads,
-        base_dir=args.base_path,
-        target_content=args.target_content.split(',') if args.target_content and ',' in args.target_content else None,
-        target_links=args.target_links.split(',') if args.target_links and ',' in args.target_links else [args.target_links],
-        valid_paths=args.valid_paths.split(',') if args.valid_paths and ',' in args.valid_paths else None,
-        is_domain_match=args.domain_match,
-        is_base_path_match=args.base_match,
-        is_debug=args.debug
-    )
-
-
-# --------------
-# CLI entrypoint
-# --------------
-if __name__ == '__main__':
-    main()

@@ -4,12 +4,12 @@
  |   |   |  (   |       (     |     (   |  \ \  \ /   |   __/  |    
 _|  _|  _| \__._|      \___| _|    \__._|   \_/\_/   _| \___| _|    
 
-----------------------------
-md_crawler.py by @paulpierre
-----------------------------
+---------------------------------
+markdown_crawler - by @paulpierre
+---------------------------------
 A multithreaded 🕸️ web crawler that recursively crawls a website and creates a 🔽 markdown file for each page
 https://github.com/paulpierre
-https://x.com/paulpierre                                                           
+https://x.com/paulpierre                                                        
 ```
 <br><br>
 
@@ -39,23 +39,23 @@ If you wish to simply use it in the CLI, you can run the following command:
 
 Install the package
 ```
-pip install md_crawler
+pip install markdown-crawler
 ```
 
 Execute the CLI
 ```
-md_crawler -t 5 -d 3 -b ./markdown https://en.wikipedia.org/wiki/Morty_Smith
+markdown-crawler -t 5 -d 3 -b ./markdown https://en.wikipedia.org/wiki/Morty_Smith
 ```
 
 To run from the github repo, once you have it checked out:
 ```
-pip install -r requirements.txt
-python3 md_crawler.py -t 5 -d 3 -b ./markdown https://en.wikipedia.org/wiki/Morty_Smith
+pip install .
+markdown-crawler -t 5 -d 3 -b ./markdown https://en.wikipedia.org/wiki/Morty_Smith
 ```
 
 Or use the library in your own code:
 ```
-from md_crawler import md_crawl
+from markdown_crawler import md_crawl
 url = 'https://en.wikipedia.org/wiki/Morty_Smith'
 md_crawl(url, max_depth=3, num_threads=5, base_path='markdown')
 ```
@@ -73,7 +73,7 @@ md_crawl(url, max_depth=3, num_threads=5, base_path='markdown')
 
 The following arguments are supported
 ```
-usage: md_crawler [-h] [--max-depth MAX_DEPTH] [--num-threads NUM_THREADS] [--base-path BASE_PATH] [--debug DEBUG]
+usage: markdown-crawler [-h] [--max-depth MAX_DEPTH] [--num-threads NUM_THREADS] [--base-path BASE_PATH] [--debug DEBUG]
                   [--target-content TARGET_CONTENT] [--target-links TARGET_LINKS] [--valid-paths VALID_PATHS]
                   [--domain-match DOMAIN_MATCH] [--base-path-match BASE_PATH_MATCH]
                   base-url
@@ -82,7 +82,7 @@ usage: md_crawler [-h] [--max-depth MAX_DEPTH] [--num-threads NUM_THREADS] [--ba
 <br><br>
 
 # 📝 Example
-Take a look at [example.py](https://github.com/paulpierre/md_crawler/blob/main/example.py) for an example
+Take a look at [example.py](https://github.com/paulpierre/markdown-crawler/blob/main/example.py) for an example
 implementation of the library. In this configuration we set:
 - `max_depth` to 3. We will crawl the base URL and 3 levels of children
 - `num_threads` to 5. We will use 5 parallel(ish) threads to crawl the website
@@ -95,13 +95,13 @@ implementation of the library. In this configuration we set:
 
 And when we run it we can view the progress
 <br>
-> ![cli](https://github.com/paulpierre/md_crawler/blob/main/img/ss_crawler.png?raw=true)
+> ![cli](https://github.com/paulpierre/markdown-crawler/blob/main/img/ss_crawler.png?raw=true)
 
 We can see the progress of our files in the `markdown` directory locally
-> ![md](https://github.com/paulpierre/md_crawler/blob/main/img/ss_dir.png?raw=true)
+> ![md](https://github.com/paulpierre/markdown-crawler/blob/main/img/ss_dir.png?raw=true)
 
 And we can see the contents of the HTML converted to markdown
-> ![md](https://github.com/paulpierre/md_crawler/blob/main/img/ss_markdown.png?raw=true)
+> ![md](https://github.com/paulpierre/markdown-crawler/blob/main/img/ss_markdown.png?raw=true)
 
 <br><br>
 # ❤️ Thanks 
@@ -134,4 +134,4 @@ SOFTWARE.
 <br><br>
 
 ###  html2text credits
-`md_crawler` makes use of html2text by the late and legendary [Aaron Swartz](me@aaronsw.com). The original source code can be found [here](http://www.aaronsw.com/2002/html2text). A modification was implemented to make it compatible with Python 3.x. It is licensed under GNU General Public License (GPL).
+`markdown_crawler` makes use of html2text by the late and legendary [Aaron Swartz](me@aaronsw.com). The original source code can be found [here](http://www.aaronsw.com/2002/html2text). A modification was implemented to make it compatible with Python 3.x. It is licensed under GNU General Public License (GPL).

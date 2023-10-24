@@ -1,4 +1,4 @@
-from md_crawler import md_crawl
+from markdown_crawler import md_crawl
 url = 'https://rickandmorty.fandom.com/wiki/Evil_Morty'
 print(f'🕸️ Starting crawl of {url}')
 md_crawl(
