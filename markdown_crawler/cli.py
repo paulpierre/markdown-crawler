@@ -24,6 +24,7 @@ def main():
     arg_parser.add_argument('--valid-paths', '-v', required=False, type=str, default=None, help='Comma separated list of valid relative paths to crawl, (ex. /wiki,/categories,/help')
     arg_parser.add_argument('--domain-match', '-m', action='store_true', default=DEFAULT_DOMAIN_MATCH, help='Crawl only links that match the base domain')
     arg_parser.add_argument('--base-path-match', '-p', action='store_true', default=DEFAULT_BASE_PATH_MATCH, help='Crawl only links that match the base path of the base_url specified in CLI')
+    arg_parser.add_argument('--links', '-i', action='store_true', default=True, help='Enable the conversion of links in the markdown output')
     arg_parser.add_argument('base_url', type=str, help='Base URL to crawl (ex. 🐍🎷 https://rickandmorty.fandom.com/wiki/Evil_Morty')
     if len(arg_parser.parse_args().__dict__.keys()) == 0:
         arg_parser.print_help()
@@ -43,7 +44,8 @@ def main():
         valid_paths=args.valid_paths.split(',') if args.valid_paths and ',' in args.valid_paths else None,
         is_domain_match=args.domain_match,
         is_base_path_match=args.base_path_match,
-        is_debug=args.debug
+        is_debug=args.debug,
+        is_links=args.links
     )
 
 

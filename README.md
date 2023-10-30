@@ -25,6 +25,7 @@ Markdown by nature is human readable and maintains document structure while keep
 > - 🧵 Threading support for faster crawling
 > - ⏯️ Continue scraping where you left off
 > - ⏬ Set the max depth of children you wish to crawl
+> - 📄 Support for tables, images, etc.
 > - ✅ Validates URLs, HTML, filepaths
 > - ⚙️ Configure list of valid base paths or base domains
 > - 🍲 Uses BeautifulSoup to parse HTML
@@ -76,6 +77,7 @@ The following arguments are supported
 usage: markdown-crawler [-h] [--max-depth MAX_DEPTH] [--num-threads NUM_THREADS] [--base-path BASE_PATH] [--debug DEBUG]
                   [--target-content TARGET_CONTENT] [--target-links TARGET_LINKS] [--valid-paths VALID_PATHS]
                   [--domain-match DOMAIN_MATCH] [--base-path-match BASE_PATH_MATCH]
+                  [--links ]
                   base-url
 ```
 
@@ -88,8 +90,9 @@ implementation of the library. In this configuration we set:
 - `num_threads` to 5. We will use 5 parallel(ish) threads to crawl the website
 - `base_dir` to `markdown`. We will save the markdown files in the `markdown` directory
 - `valid_paths` an array of valid relative URL paths. We will only crawl pages that are in this list and base path
+- `target_content` to `div#content`. We will only crawl pages that have this HTML element using CSS target selectors. You can provide multiple and it will concatenate the results
 - `is_domain_match` to `False`. We will only crawl pages that are in the same domain as the base URL
-- `is_base_match` to `False`. We will include all URLs in the same domain, even if they don't begin with the base url
+- `is_base_path_match` to `False`. We will include all URLs in the same domain, even if they don't begin with the base url
 - `is_debug` to True. We will print out verbose logging
 <br><br>
 
@@ -133,5 +136,5 @@ SOFTWARE.
 
 <br><br>
 
-###  html2text credits
-`markdown_crawler` makes use of html2text by the late and legendary [Aaron Swartz](me@aaronsw.com). The original source code can be found [here](http://www.aaronsw.com/2002/html2text). A modification was implemented to make it compatible with Python 3.x. It is licensed under GNU General Public License (GPL).
+###  markdownify credits
+`markdown_crawler` makes use of markdownify by Matthew Tretter. The original source code can be found [here](https://github.com/matthewwithanm/python-markdownify). It is licensed under the [MIT license](https://github.com/matthewwithanm/python-markdownify/blob/develop/LICENSE).

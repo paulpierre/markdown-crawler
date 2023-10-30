@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import urllib.parse
 import threading
-from markdown_crawler import html2text
+from markdownify import markdownify as md
 import requests
 import logging
 import queue
@@ -72,8 +72,10 @@ def crawl(
     target_content: Union[str, List[str]] = None,
     valid_paths: Union[str, List[str]] = None,
     is_domain_match: Optional[bool] = DEFAULT_DOMAIN_MATCH,
-    is_base_path_match: Optional[bool] = DEFAULT_BASE_PATH_MATCH
+    is_base_path_match: Optional[bool] = DEFAULT_BASE_PATH_MATCH,
+    is_links: Optional[bool] = False
 ) -> List[str]:
+
     if url in already_crawled:
         return []
     try:
@@ -87,45 +89,58 @@ def crawl(
         return []
     already_crawled.add(url)
 
+    # ---------------------------------
+    # List of elements we want to strip
+    # ---------------------------------
+    strip_elements = []
+
+    if is_links:
+        strip_elements = ['a']
+
     # -------------------------------
     # Create BS4 instance for parsing
     # -------------------------------
     soup = BeautifulSoup(response.text, 'html.parser')
 
+    # Strip unwanted tags
+    for script in soup(['script', 'style']):
+        script.decompose()
+
     # --------------------------------------------
     # Write the markdown file if it does not exist
     # --------------------------------------------
     if not os.path.exists(file_path):
-        h = html2text.HTML2Text()
-        h.ignore_images = True
-        h.ignore_links = True
 
         file_name = file_path.split("/")[-1]
 
         # ------------------
         # Get target content
         # ------------------
-        content = get_target_content(soup, target_content,)
 
-        # ---------------
-        # Return if empty
-        # --------------
-        if not content:
-            logger.error(f'❌ Empty content for {file_path}. Please check your targets, skipping. ')
-            return []
+        content = get_target_content(soup, target_content=target_content)
 
-        # --------------
-        # Parse markdown
-        # --------------
-        md = h.handle(content)
+        if content:
+            # logger.error(f'❌ Empty content for {file_path}. Please check your targets skipping.')
+            # return []
 
-        logger.info(f'Created 📝 {file_name}')
-    
-        # ------------------------------
-        # Write markdown content to file
-        # ------------------------------
-        with open(file_path, 'w') as f:
-            f.write(md)
+            # --------------
+            # Parse markdown
+            # --------------
+            output = md(
+                content,
+                keep_inline_images_in=['td', 'th', 'a', 'figure'],
+                strip=strip_elements
+            )
+
+            logger.info(f'Created 📝 {file_name}')
+
+            # ------------------------------
+            # Write markdown content to file
+            # ------------------------------
+            with open(file_path, 'w') as f:
+                f.write(output)
+        else:
+            logger.error(f'❌ Empty content for {file_path}. Please check your targets skipping.')
 
     child_urls = get_target_links(
         soup,
@@ -151,10 +166,9 @@ def get_target_content(
     # Get target content by target selector
     # -------------------------------------
     if target_content:
-        for tag in soup.find_all(target_content):
-            logger.debug(f'🔥 Target content: {target_content} {str(tag)}')
-            # Get tag html
-            content += f'{str(tag)}'
+        for target in target_content:
+            for tag in soup.select(target):
+                content += f'{str(tag)}'.replace('\n', '')
 
     # ---------------------------
     # Naive estimation of content
@@ -166,7 +180,7 @@ def get_target_content(
             if text_length > max_text_length:
                 max_text_length = text_length
                 main_content = tag
-    
+
         content = str(main_content)
 
     return content if len(content) > 0 else False
@@ -226,8 +240,10 @@ def worker(
     target_content: Union[List[str], None] = None,
     valid_paths: Union[List[str], None] = None,
     is_domain_match: bool = None,
-    is_base_path_match: bool = None
+    is_base_path_match: bool = None,
+    is_links: Optional[bool] = False
 ) -> None:
+
     while not q.empty():
         depth, url = q.get()
         if depth > max_depth:
@@ -245,7 +261,8 @@ def worker(
             target_content,
             valid_paths,
             is_domain_match,
-            is_base_path_match
+            is_base_path_match,
+            is_links
         )
         child_urls = [normalize_url(u) for u in child_urls]
         for child_url in child_urls:
@@ -266,7 +283,8 @@ def md_crawl(
         valid_paths: Union[str, List[str]] = None,
         is_domain_match: Optional[bool] = None,
         is_base_path_match: Optional[bool] = None,
-        is_debug: Optional[bool] = False
+        is_debug: Optional[bool] = False,
+        is_links: Optional[bool] = False
 ) -> None:
     if is_domain_match is False and is_base_path_match is True:
         raise ValueError('❌ Domain match must be True if base match is set to True')
@@ -287,8 +305,10 @@ def md_crawl(
         valid_paths = valid_paths.split(',') if ',' in valid_paths else [valid_paths]
 
     if is_debug:
-        logger.setLevel(level=logging.DEBUG)
+        logging.basicConfig(level=logging.DEBUG)
         logger.debug('🐞 Debugging enabled')
+    else:
+        logging.basicConfig(level=logging.INFO)
 
     logger.info(f'🕸️ Crawling {base_url} at ⏬ depth {max_depth} with 🧵 {num_threads} threads')
 
@@ -324,7 +344,8 @@ def md_crawl(
                 target_content,
                 valid_paths,
                 is_domain_match,
-                is_base_path_match
+                is_base_path_match,
+                is_links
             )
         )
         threads.append(t)
