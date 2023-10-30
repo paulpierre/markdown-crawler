@@ -17,10 +17,9 @@ https://x.com/paulpierre
 This is a multithreaded web crawler that crawls a website and creates markdown files for each page.
 It was primarily created for large language model document parsing to simplify chunking and processing of large documents for RAG use cases.
 Markdown by nature is human readable and maintains document structure while keeping a small footprint.
-
 <br>
 
-## Features include
+# ✨ Features include
 
 > - 🧵 Threading support for faster crawling
 > - ⏯️ Continue scraping where you left off
@@ -31,6 +30,14 @@ Markdown by nature is human readable and maintains document structure while keep
 > - 🍲 Uses BeautifulSoup to parse HTML
 > - 🪵 Verbose logging option
 > - 👩‍💻 Ready-to-go CLI interface
+<br>
+
+# 🏗️ Use cases
+- RAG (retrieval augmented generation) - my primary usecase, use this to normalize large documents and chunk by header, pargraph or sentence
+- LLM fine-tuning - Create a large corpus of markdown files as a first step and leverage `gpt-3.5-turbo` or `Mistral-7B` to extract Q&A pairs
+- Agent knowledge - Leverage this with [autogen](https://github.com/microsoft/autogen) for expert agents, for example if you wish to reconstruct the knowledge corpus of a videogame or movie, use this to generate the given expert corpus
+- Agent / LLM tools - Use this for online RAG learning so your chatbot continues to learn. Use SERP and scrape + index top N results w/ markdown-crawler
+- many more ..
 
 <br><br>
 
@@ -108,7 +115,7 @@ And we can see the contents of the HTML converted to markdown
 
 <br><br>
 # ❤️ Thanks 
-If you have an issues, please feel free to open an issue or submit a PR. You can reach me via DM on Twitter/X.
+If you have any issues, please feel free to open an issue or submit a PR. You can reach me via DM on Twitter/X.
 
   - Follow me on [Twitter / X](https://x.com/paulpierre)
   - Give me a ⭐ on [Github](https://github.com/paulpierre)
