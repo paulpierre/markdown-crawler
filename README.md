@@ -70,11 +70,10 @@ md_crawl(url, max_depth=3, num_threads=5, base_path='markdown')
 <br><br>
 
 # ⚠️  Requirements
-
-
 - Python 3.x
 - BeautifulSoup4
 - requests
+- markdownify
 
 <br><br>
 # 🔍 Usage
