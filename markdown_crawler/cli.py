@@ -8,6 +8,7 @@ from markdown_crawler import (
     DEFAULT_DOMAIN_MATCH,
     DEFAULT_BASE_PATH_MATCH,
     DEFAULT_TARGET_CONTENT,
+    DEFAULT_HEADING_STYLE,
     BANNER
 )
 
@@ -19,11 +20,13 @@ def main():
     arg_parser.add_argument('--num-threads', '-t', required=False, default=DEFAULT_NUM_THREADS, type=int, help='Number of threads to use for crawling')
     arg_parser.add_argument('--base-dir', '-b', required=False, default=DEFAULT_BASE_DIR, type=str, help='Base directory to save markdown files in')
     arg_parser.add_argument('--debug', '-e', action='store_true', default=False, help='Enable debug mode')
-    arg_parser.add_argument('--target-content', '-c', required=False, type=str, default=DEFAULT_TARGET_CONTENT, help='CSS target path of the content to extract from each page')
-    arg_parser.add_argument('--target-links', '-l', required=False, type=str, default=DEFAULT_TARGET_LINKS, help='CSS target path containing the links to crawl')
+    arg_parser.add_argument('--target-content', '-c', required=False, type=str, default=','.join(DEFAULT_TARGET_CONTENT), help='CSS target path of the content to extract from each page')
+    arg_parser.add_argument('--target-links', '-l', required=False, type=str, default=','.join(DEFAULT_TARGET_LINKS), help='CSS target path containing the links to crawl')
     arg_parser.add_argument('--valid-paths', '-v', required=False, type=str, default=None, help='Comma separated list of valid relative paths to crawl, (ex. /wiki,/categories,/help')
+    arg_parser.add_argument('--exclude-paths', '-x', required=False, type=str, default=None, help='Comma separated list of paths to exclude from crawling, (ex. /admin,/login')
     arg_parser.add_argument('--domain-match', '-m', action='store_true', default=DEFAULT_DOMAIN_MATCH, help='Crawl only links that match the base domain')
     arg_parser.add_argument('--base-path-match', '-p', action='store_true', default=DEFAULT_BASE_PATH_MATCH, help='Crawl only links that match the base path of the base_url specified in CLI')
+    arg_parser.add_argument('--heading-style', '-s', required=False, type=str, default=DEFAULT_HEADING_STYLE, choices=['ATX', 'ATX_CLOSED', 'UNDERLINE', 'SETEXT'], help='Markdown heading style: ATX (#), ATX_CLOSED (##), UNDERLINE (===), SETEXT')
     arg_parser.add_argument('--links', '-i', action='store_true', default=True, help='Enable the conversion of links in the markdown output')
     arg_parser.add_argument('base_url', type=str, help='Base URL to crawl (ex. 🐍🎷 https://rickandmorty.fandom.com/wiki/Evil_Morty')
     if len(arg_parser.parse_args().__dict__.keys()) == 0:
@@ -42,10 +45,12 @@ def main():
         target_content=args.target_content.split(',') if args.target_content and ',' in args.target_content else None,
         target_links=args.target_links.split(',') if args.target_links and ',' in args.target_links else [args.target_links],
         valid_paths=args.valid_paths.split(',') if args.valid_paths and ',' in args.valid_paths else None,
+        exclude_paths=args.exclude_paths.split(',') if args.exclude_paths and ',' in args.exclude_paths else None,
         is_domain_match=args.domain_match,
         is_base_path_match=args.base_path_match,
         is_debug=args.debug,
-        is_links=args.links
+        is_links=args.links,
+        heading_style=args.heading_style,
     )
 
 
