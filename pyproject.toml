@@ -5,17 +5,22 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "markdown-crawler"
-version = "0.0.8"
+version = "0.0.9"
 authors = [
   { name="Paul Pierre", email="hi@paulpierre.com" },
 ]
 description = "A multithreaded 🕸️ web crawler that recursively crawls a website and creates a 🔽 markdown file for each page"
 readme = "README.md"
-requires-python = ">=3.4"
+requires-python = ">=3.8"
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+]
+dependencies = [
+    "beautifulsoup4>=4.10.0",
+    "markdownify>=0.14.1",
+    "requests>=2.25.1",
 ]
 
 [project.urls]
@@ -25,3 +30,9 @@ classifiers = [
 
 [project.scripts]
 markdown-crawler = "markdown_crawler.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
