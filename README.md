@@ -27,9 +27,30 @@ Markdown by nature is human readable and maintains document structure while keep
 > - 📄 Support for tables, images, etc.
 > - ✅ Validates URLs, HTML, filepaths
 > - ⚙️ Configure list of valid base paths or base domains
+> - 🚫 Exclude specific paths from crawling (`--exclude-paths`)
+> - 🎨 Configurable markdown heading style (`--heading-style`)
+> - 🌐 Browser-like User-Agent to bypass JS checks
 > - 🍲 Uses BeautifulSoup to parse HTML
 > - 🪵 Verbose logging option
 > - 👩‍💻 Ready-to-go CLI interface
+> - 🧪 Comprehensive test suite (95% coverage)
+<br>
+
+# 📦 What's New in v0.0.5
+
+This release resolves **6 open issues** and introduces several community-requested features:
+
+| Issue | Fix |
+|-------|-----|
+| #7 | UnicodeEncodeError on non-ASCII content — UTF-8 encoding on all file writes |
+| #8 | Bypass JavaScript checks — browser-like User-Agent header on all requests |
+| #9 | Exclude paths from crawling — new `--exclude-paths` / `-x` CLI flag |
+| #10 | target_content CSS selector handling — null href links now skipped |
+| #11 | UnboundLocalError fix in get_target_content |
+| #17 | Dependencies added to pyproject.toml for uvx support |
+| #20 | Configurable heading_style for markdownify (`ATX`, `UNDERLINE`, etc.) |
+
+Also includes a comprehensive test suite — 60 tests, 95% coverage. See the [CHANGELOG.md](CHANGELOG.md) for full details.
 <br>
 
 # 🏗️ Use cases
@@ -80,11 +101,11 @@ md_crawl(url, max_depth=3, num_threads=5, base_path='markdown')
 
 The following arguments are supported
 ```
-usage: markdown-crawler [-h] [--max-depth MAX_DEPTH] [--num-threads NUM_THREADS] [--base-path BASE_PATH] [--debug DEBUG]
+usage: markdown-crawler [-h] [--max-depth MAX_DEPTH] [--num-threads NUM_THREADS] [--base-dir BASE_DIR] [--debug DEBUG]
                   [--target-content TARGET_CONTENT] [--target-links TARGET_LINKS] [--valid-paths VALID_PATHS]
-                  [--domain-match DOMAIN_MATCH] [--base-path-match BASE_PATH_MATCH]
-                  [--links ]
-                  base-url
+                  [--exclude-paths EXCLUDE_PATHS] [--domain-match DOMAIN_MATCH] [--base-path-match BASE_PATH_MATCH]
+                  [--heading-style HEADING_STYLE] [--links ]
+                  base_url
 ```
 
 <br><br>
