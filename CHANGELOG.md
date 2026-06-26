@@ -5,7 +5,7 @@ All notable changes to `markdown-crawler` will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.0.5] - 2026-06-26
+## [0.0.9] - 2026-06-26
 
 ### Fixed
 - **#11** — `UnboundLocalError` in `get_target_content` when no tags are found. `main_content` is now initialized to `None` and checked before `str()` conversion.

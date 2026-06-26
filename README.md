@@ -36,7 +36,7 @@ Markdown by nature is human readable and maintains document structure while keep
 > - 🧪 Comprehensive test suite (95% coverage)
 <br>
 
-# 📦 What's New in v0.0.5
+# 📦 What's New in v0.0.9
 
 This release resolves **6 open issues** and introduces several community-requested features:
 
