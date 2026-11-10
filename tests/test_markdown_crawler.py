@@ -699,6 +699,42 @@ class TestCLI:
         call_kwargs = mock_md_crawl.call_args.kwargs
         assert call_kwargs['heading_style'] == 'UNDERLINE'
 
+    @patch('markdown_crawler.cli.md_crawl')
+    def test_cli_single_valid_path_kept(self, mock_md_crawl):
+        sys.argv = [
+            'markdown-crawler',
+            '-v', '/wiki',
+            '-b', '/tmp/cli_single_valid',
+            'https://example.com'
+        ]
+        cli_main()
+        call_kwargs = mock_md_crawl.call_args.kwargs
+        assert call_kwargs['valid_paths'] == ['/wiki']
+
+    @patch('markdown_crawler.cli.md_crawl')
+    def test_cli_single_target_content_kept(self, mock_md_crawl):
+        sys.argv = [
+            'markdown-crawler',
+            '-c', 'main',
+            '-b', '/tmp/cli_single_content',
+            'https://example.com'
+        ]
+        cli_main()
+        call_kwargs = mock_md_crawl.call_args.kwargs
+        assert call_kwargs['target_content'] == ['main']
+
+    @patch('markdown_crawler.cli.md_crawl')
+    def test_cli_single_exclude_path_kept(self, mock_md_crawl):
+        sys.argv = [
+            'markdown-crawler',
+            '-x', '/admin',
+            '-b', '/tmp/cli_single_exclude',
+            'https://example.com'
+        ]
+        cli_main()
+        call_kwargs = mock_md_crawl.call_args.kwargs
+        assert call_kwargs['exclude_paths'] == ['/admin']
+
 
 # ──────────────────── Constants & Exports ────────────────────
 
